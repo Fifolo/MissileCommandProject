@@ -1,0 +1,44 @@
+{
+    "name": "PlayerActions",
+    "maps": [
+        {
+            "name": "InGame",
+            "id": "172f3d0d-3da3-465f-ab3a-f950e467da25",
+            "actions": [
+                {
+                    "name": "Fire",
+                    "type": "Button",
+                    "id": "2654dbad-eb6f-40a5-b840-d6482b8a005f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c11c43e4-89a5-4be5-9ab9-3ce89d693d4c",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Mouse&Keyboard",
+                    "action": "Fire",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Mouse&Keyboard",
+            "bindingGroup": "Mouse&Keyboard",
+            "devices": []
+        },
+        {
+            "name": "Touch",
+            "bindingGroup": "Touch",
+            "devices": []
+        }
+    ]
+}
