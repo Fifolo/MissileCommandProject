@@ -129,6 +129,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _missileDestruction: {fileID: 5708503968671426264, guid: 088f639cd486b964cb812eb3d1cc19f1, type: 3}
+  _missileValue: 10
 --- !u!58 &-957345796032419853
 CircleCollider2D:
   m_ObjectHideFlags: 0
