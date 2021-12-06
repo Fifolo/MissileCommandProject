@@ -31,14 +31,6 @@ namespace MissileCommand
             _missileTransform.Translate(_movementDirection * _movementSpeed * Time.deltaTime);
         }
 
-        protected virtual void OnTriggerEnter2D(Collider2D collision)
-        {
-            if (collision.TryGetComponent(out ITarget target))
-            {
-                target.Hit();
-                DestinationReached();
-            }
-        }
         protected void DestinationReached()
         {
             if (_missileDestruction)

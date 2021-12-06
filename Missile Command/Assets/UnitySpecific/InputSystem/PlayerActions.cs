@@ -25,6 +25,14 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""22d28623-0a46-423d-bbe4-b26d0d6c5526"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -36,6 +44,17 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": ""Mouse&Keyboard"",
                     ""action"": ""Fire"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b8939d35-6a4f-47de-be29-c302124c8867"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Mouse&Keyboard"",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -58,6 +77,7 @@ public class @PlayerActions : IInputActionCollection, IDisposable
         // InGame
         m_InGame = asset.FindActionMap("InGame", throwIfNotFound: true);
         m_InGame_Fire = m_InGame.FindAction("Fire", throwIfNotFound: true);
+        m_InGame_Pause = m_InGame.FindAction("Pause", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -108,11 +128,13 @@ public class @PlayerActions : IInputActionCollection, IDisposable
     private readonly InputActionMap m_InGame;
     private IInGameActions m_InGameActionsCallbackInterface;
     private readonly InputAction m_InGame_Fire;
+    private readonly InputAction m_InGame_Pause;
     public struct InGameActions
     {
         private @PlayerActions m_Wrapper;
         public InGameActions(@PlayerActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Fire => m_Wrapper.m_InGame_Fire;
+        public InputAction @Pause => m_Wrapper.m_InGame_Pause;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -125,6 +147,9 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                 @Fire.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnFire;
                 @Fire.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnFire;
                 @Fire.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnFire;
+                @Pause.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnPause;
+                @Pause.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnPause;
+                @Pause.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnPause;
             }
             m_Wrapper.m_InGameActionsCallbackInterface = instance;
             if (instance != null)
@@ -132,6 +157,9 @@ public class @PlayerActions : IInputActionCollection, IDisposable
                 @Fire.started += instance.OnFire;
                 @Fire.performed += instance.OnFire;
                 @Fire.canceled += instance.OnFire;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
             }
         }
     }
@@ -157,5 +185,6 @@ public class @PlayerActions : IInputActionCollection, IDisposable
     public interface IInGameActions
     {
         void OnFire(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
 }

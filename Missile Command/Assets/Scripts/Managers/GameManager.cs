@@ -24,7 +24,8 @@ namespace MissileCommand
             Boot,
             MainMenu,
             Running,
-            Paused
+            Paused,
+            GameOver
         }
         #region MonoBehaviour
         protected override void Awake()
@@ -83,10 +84,11 @@ namespace MissileCommand
 
         private void OnLevelLoadComplete(AsyncOperation obj)
         {
+            previousSceneIndex = currentSceneIndex;
             currentSceneIndex = sceneLoading;
             sceneLoading = -1;
 
-            SceneManager.SetActiveScene(SceneManager.GetSceneAt(currentSceneIndex));
+            SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(currentSceneIndex));
 
             if (IsSceneUnloadable(previousSceneIndex))
                 UnloadScene(previousSceneIndex);
@@ -99,7 +101,10 @@ namespace MissileCommand
         private bool IsSceneLoadable(int sceneIndex) =>
             (sceneIndex > 0 && sceneIndex < SceneManager.sceneCountInBuildSettings) &&
             sceneIndex != currentSceneIndex;
-        private bool IsSceneUnloadable(int sceneIndex) => IsSceneLoadable(sceneIndex);
+
+        private bool IsSceneUnloadable(int sceneIndex) =>
+            (sceneIndex < SceneManager.sceneCountInBuildSettings) &&
+            sceneIndex != currentSceneIndex;
 
         #endregion
 
@@ -109,6 +114,20 @@ namespace MissileCommand
         {
             if (IsSceneLoadable(sceneIndex))
                 LoadScene(sceneIndex);
+        }
+        public void StartGame() => LoadLevel(2);
+        public void PauseToggle()
+        {
+            if (CurrentGameState == GameState.Running)
+                ChangeGameState(GameState.Paused);
+
+            else if (CurrentGameState == GameState.Paused)
+                ChangeGameState(GameState.Running);
+        }
+        public void GameOver()
+        {
+            if (CurrentGameState == GameState.Running)
+                ChangeGameState(GameState.GameOver);
         }
         #endregion
     }

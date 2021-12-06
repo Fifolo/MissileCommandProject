@@ -5,10 +5,10 @@ using MissileCommand.Utils;
 
 namespace MissileCommand
 {
-    public class EnemySpawner : Singleton<EnemySpawner>
+    public class EnemyMissileSpawner : Singleton<EnemyMissileSpawner>
     {
         public delegate void EnemyEvent();
-        public event EnemyEvent OnNoMoreMissilesToSpawn;
+        public static event EnemyEvent OnNoMoreMissilesToSpawn;
 
         [SerializeField] private EnemyMissile _enemyMissile;
         [SerializeField] private float _reapeatRate = 1f;
@@ -37,27 +37,36 @@ namespace MissileCommand
         {
             while (_playerCities.HasItems() && _availableMissiles > 0)
             {
-                SpawnMissile();
+                SpawnEnemyMissile();
+                _availableMissiles--;
                 yield return new WaitForSeconds(_reapeatRate);
             }
 
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(3f);
             OnNoMoreMissilesToSpawn?.Invoke();
         }
-        private void SpawnMissile()
+        private void SpawnEnemyMissile(Vector2 spawnPosition, Vector2 destination)
         {
-            PlayerCity targetCity = _playerCities.GetRandomItem();
+            EnemyMissile missile = Pooler<EnemyMissile>.Instance.GetObject();
+            missile.transform.position = spawnPosition;
+            missile.SetDestination(destination);
+            missile.gameObject.SetActive(true);
+        }
+        private void SpawnEnemyMissile(Vector2 spawnPosition)
+        {
+            Vector2 destination = Vector2.zero;
 
-            Vector2 targetDestination = targetCity.transform.position;
+            if (_playerCities.HasItems())
+                destination = _playerCities.GetRandomItem().transform.position;
+
+            SpawnEnemyMissile(spawnPosition, destination);
+        }
+        private void SpawnEnemyMissile()
+        {
             Vector2 spawnPosition = _spawnerTransform.position;
             spawnPosition.x += Random.Range(-_spawnRange, _spawnRange);
 
-            EnemyMissile missile = Pooler<EnemyMissile>.Instance.GetObject();
-            missile.transform.position = spawnPosition;
-            missile.SetDestination(targetDestination);
-            missile.gameObject.SetActive(true);
-
-            _availableMissiles--;
+            SpawnEnemyMissile(spawnPosition);
         }
         private void StopSpawning() => StopCoroutine(_spawningCoroutine);
         private void StartSpawning()
@@ -66,6 +75,10 @@ namespace MissileCommand
                 StopSpawning();
 
             _spawningCoroutine = StartCoroutine(Spawning());
+        }
+        public void SpawnMissile(Vector2 spawnPosition, Vector2 destination)
+        {
+            SpawnEnemyMissile(spawnPosition, destination);
         }
     }
 }

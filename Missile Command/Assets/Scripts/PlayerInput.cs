@@ -23,6 +23,16 @@ namespace MissileCommand
             if (mainCamera == null) Debug.LogError($"Main camera not attached to {GetType()}");
         }
 
+        private void Start()
+        {
+            RoundManager.OnRoundFinish += OnRoundFinish;
+            RoundManager.OnRoundStart += OnRoundStart;
+        }
+
+        private void OnRoundStart(int roundNumber) => inputActions.InGame.Enable();
+
+        private void OnRoundFinish(int roundNumber) => inputActions.InGame.Disable();
+
         private void OnEnable()
         {
             inputActions.InGame.Enable();
@@ -36,9 +46,24 @@ namespace MissileCommand
         }
         #endregion
 
-        #region Methods
-        private void SubscribeToInputActions() => inputActions.InGame.Fire.performed += Fire_performed;
-        private void UnsubscribeToInputActions() => inputActions.InGame.Fire.performed -= Fire_performed;
+        #region Private Methods
+        private void SubscribeToInputActions()
+        {
+            inputActions.InGame.Fire.performed += Fire_performed;
+            inputActions.InGame.Pause.performed += Pause_performed;
+        }
+
+        private void UnsubscribeToInputActions()
+        {
+            inputActions.InGame.Fire.performed -= Fire_performed;
+            inputActions.InGame.Pause.performed -= Pause_performed;
+        }
+
+        private void Pause_performed(InputAction.CallbackContext obj)
+        {
+            if (GameManager.Instance)
+                GameManager.Instance.PauseToggle();
+        }
         private void Fire_performed(InputAction.CallbackContext ctx)
         {
             Vector2 screenPosition = Mouse.current.position.ReadValue();

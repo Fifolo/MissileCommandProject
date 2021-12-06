@@ -22,7 +22,7 @@ namespace MissileCommand
         protected override void Awake()
         {
             base.Awake();
-            RoundNumber = 1;
+            RoundNumber = 0;
         }
 
         private void OnNoMoreMissilesToSpawn()
@@ -31,12 +31,14 @@ namespace MissileCommand
 
             if (PlayerCity.AllPlayerCities.HasItems())
                 Invoke("StartNewRound", 3f);
+
+            else if (GameManager.Instance)
+                GameManager.Instance.GameOver();
         }
 
         private void Start()
         {
-            if (EnemySpawner.Instance)
-                EnemySpawner.Instance.OnNoMoreMissilesToSpawn += OnNoMoreMissilesToSpawn;
+            EnemyMissileSpawner.OnNoMoreMissilesToSpawn += OnNoMoreMissilesToSpawn;
             StartNewRound();
         }
 

@@ -28,6 +28,7 @@ namespace MissileCommand
             float time = 0;
             Vector3 startScale = _destructionTransform.localScale;
             Vector3 endScale = Vector3.one * _endScale;
+
             while (time < _lifeSpan)
             {
                 _destructionTransform.localScale = Vector3.Lerp(startScale, endScale, time / _lifeSpan);

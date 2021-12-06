@@ -6,37 +6,38 @@ namespace MissileCommand
 {
     public class UIManager : Singleton<UIManager>
     {
-        [Header("In Game Properties")]
         [SerializeField] private Canvas _inGameCanvas;
-        [SerializeField] private TextMeshProUGUI _scoreText;
-
-        [Header("Round Break Properties")]
         [SerializeField] private Canvas _roundBreakCanvas;
-        [SerializeField] private TextMeshProUGUI _roundText;
-        [SerializeField] private TextMeshProUGUI _pointsInRoundText;
-        [SerializeField] private TextMeshProUGUI _totalPointsText;
+        [SerializeField] private Canvas _pauseMenuCanvas;
+        [SerializeField] private Canvas _gameOverCanvas;
 
+        private Canvas _currentCanvas;
 
         protected override void Awake()
         {
             base.Awake();
-            ScoreManager.OnTotalScoreChange += OnTotalScoreChange;
             RoundManager.OnRoundFinish += OnRoundFinish;
+            GameManager.OnGameStateChange += GameManager_OnGameStateChange;
+
+            _pauseMenuCanvas.gameObject.SetActive(false);
+            _gameOverCanvas.gameObject.SetActive(false);
+        }
+
+        private void GameManager_OnGameStateChange(GameManager.GameState from, GameManager.GameState to)
+        {
+            if (to == GameManager.GameState.Paused)
+                SwitchCanvas(_pauseMenuCanvas);
+
+            else if (to == GameManager.GameState.Running)
+                SwitchCanvas(_inGameCanvas);
+
+            else if (to == GameManager.GameState.GameOver)
+                SwitchCanvas(_gameOverCanvas);
         }
 
         private void OnRoundFinish(int roundNumber)
         {
-            _inGameCanvas.gameObject.SetActive(false);
-            _roundBreakCanvas.gameObject.SetActive(true);
-
-            _roundText.text = $"Round {roundNumber}";
-            _pointsInRoundText.text = $"Points this round: {ScoreManager.Instance.ScoreThisRound}";
-            _totalPointsText.text = $"Total Points: {ScoreManager.Instance.TotalScore}";
-        }
-
-        private void OnTotalScoreChange(int score)
-        {
-            _scoreText.text = ScoreManager.Instance.TotalScore.ToString();
+            SwitchCanvas(_roundBreakCanvas);
         }
 
         protected void OnEnable()
@@ -53,6 +54,16 @@ namespace MissileCommand
         {
             _roundBreakCanvas.gameObject.SetActive(false);
             _inGameCanvas.gameObject.SetActive(true);
+        }
+        private void SwitchCanvas(Canvas newCanvas)
+        {
+            if (newCanvas)
+            {
+                if (_currentCanvas) _currentCanvas.gameObject.SetActive(false);
+
+                _currentCanvas = newCanvas;
+                _currentCanvas.gameObject.SetActive(true);
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ namespace MissileCommand
 
         private void OnRoundStart(int roundNumber)
         {
-            if (roundNumber <= 1)
+            if (roundNumber < 1)
                 TotalScore = 0;
 
             ScoreThisRound = 0;
