@@ -5,8 +5,11 @@ using UnityEngine;
 namespace MissileCommand
 {
     [RequireComponent(typeof(Collider2D))]
-    public class MissileDestruction : MonoBehaviour
+    public class Destruction : MonoBehaviour
     {
+        public delegate void DestructionEvent(int enemyValue);
+        public static event DestructionEvent OnEnemyDestroyed;
+
         [Range(0.5f, 2f)]
         [SerializeField] private float _lifeSpan = 0.5f;
         [Range(1f, 2f)]
@@ -21,9 +24,9 @@ namespace MissileCommand
         }
         private void OnEnable()
         {
-            StartCoroutine(Destruction());
+            StartCoroutine(StartDestruction());
         }
-        private IEnumerator Destruction()
+        private IEnumerator StartDestruction()
         {
             float time = 0;
             Vector3 startScale = _destructionTransform.localScale;
@@ -35,8 +38,8 @@ namespace MissileCommand
                 time += Time.deltaTime;
                 yield return null;
             }
-            if (Pooler<MissileDestruction>.Instance)
-                Pooler<MissileDestruction>.Instance.ReturnObject(this);
+            if (Pooler<Destruction>.Instance)
+                Pooler<Destruction>.Instance.ReturnObject(this);
 
             else Destroy(gameObject);
         }
@@ -44,6 +47,9 @@ namespace MissileCommand
         {
             if (other.TryGetComponent(out ITarget target))
                 target.Hit();
+
+            if (other.TryGetComponent(out IPointIncreaserOnDeath pointIncreaser))
+                OnEnemyDestroyed?.Invoke(pointIncreaser.GetValue());
         }
     }
 }

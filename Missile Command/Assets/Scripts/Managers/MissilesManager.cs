@@ -62,11 +62,18 @@ namespace MissileCommand
 
         #endregion
 
-        private void Start()
+        protected override void Awake()
+        {
+            base.Awake();
+            SetMaxDuplicationHeight();
+        }
+
+        private void SetMaxDuplicationHeight()
         {
             float maxHeight = Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height)).y;
             float lowestHeight = Camera.main.ScreenToWorldPoint(Vector2.zero).y;
 
+            float maxWidth = Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.width)).x;
             _maxDuplicationHeight = Mathf.Lerp(lowestHeight, maxHeight, _duplicationAllowance);
         }
 

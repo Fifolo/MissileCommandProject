@@ -4,12 +4,9 @@ using UnityEngine;
 
 namespace MissileCommand
 {
-    public class EnemyMissile : Missile, ITarget
+    public class EnemyMissile : Missile, ITarget, IPointIncreaserOnDeath
     {
         [SerializeField] private int _missileValue = 10;
-
-        public delegate void MissileEvent(int missileValue);
-        public static event MissileEvent OnEnemyMissileDestroyed;
         public void Hit()
         {
             DestinationReached();
@@ -32,7 +29,7 @@ namespace MissileCommand
         {
             if (MissilesManager.Instance)
             {
-                _movementSpeed = MissilesManager.Instance.EnemyMissileSpeed;
+                _objectMover.SetMovementSpeed(MissilesManager.Instance.EnemyMissileSpeed);
 
                 if (MissilesManager.Instance.ChanceToDuplicate > 0)
                     StartCoroutine(TryToDuplicate());
@@ -42,7 +39,7 @@ namespace MissileCommand
         {
             yield return new WaitForSeconds(0.5f);
 
-            while (!ReachedDestination())
+            while (!_objectMover.ReachedDestination())
             {
                 if (CanDuplicate())
                 {
@@ -70,12 +67,12 @@ namespace MissileCommand
 
         protected override void Destroy()
         {
-            OnEnemyMissileDestroyed?.Invoke(_missileValue);
-
             if (Pooler<EnemyMissile>.Instance)
                 Pooler<EnemyMissile>.Instance.ReturnObject(this);
 
             else base.Destroy();
         }
+
+        public int GetValue() => _missileValue;
     }
 }

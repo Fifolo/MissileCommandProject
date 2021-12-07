@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace MissileCommand
 {
-    public class MissileDestructionPooler : Pooler<MissileDestruction>
+    public class MissileDestructionPooler : Pooler<Destruction>
     {
-        public override void ReturnObject(MissileDestruction objectToReturn)
+        public override void ReturnObject(Destruction objectToReturn)
         {
             objectToReturn.transform.localScale = objectToReturn.StartScale;
             base.ReturnObject(objectToReturn);

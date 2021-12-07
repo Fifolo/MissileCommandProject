@@ -8,8 +8,8 @@ namespace MissileCommand
     {
         private void OnEnable()
         {
-            if(MissilesManager.Instance)
-            _movementSpeed = MissilesManager.Instance.PlayerMissileSpeed;
+            if (MissilesManager.Instance)
+                _objectMover.SetMovementSpeed(MissilesManager.Instance.PlayerMissileSpeed);
         }
 
         protected override void Destroy()

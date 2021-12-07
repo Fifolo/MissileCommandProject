@@ -5,14 +5,16 @@ using MissileCommand.Utils;
 
 namespace MissileCommand
 {
+    [RequireComponent(typeof(EnemyMissileShooter))]
     public class EnemyMissileSpawner : Singleton<EnemyMissileSpawner>
     {
         public delegate void EnemyEvent();
         public static event EnemyEvent OnNoMoreMissilesToSpawn;
 
-        [SerializeField] private EnemyMissile _enemyMissile;
         [SerializeField] private float _reapeatRate = 1f;
         [SerializeField] private float _spawnRange = 10f;
+
+        private EnemyMissileShooter _missileShooter;
 
         private List<PlayerCity> _playerCities;
         private int _availableMissiles = 0;
@@ -24,8 +26,11 @@ namespace MissileCommand
             base.Awake();
             _spawnerTransform = transform;
             _playerCities = PlayerCity.AllPlayerCities;
-            RoundManager.OnRoundStart += RoundManager_OnRoundStart;
+            _missileShooter = GetComponent<EnemyMissileShooter>();
         }
+
+        private void OnEnable() => RoundManager.OnRoundStart += RoundManager_OnRoundStart;
+        private void OnDisable() => RoundManager.OnRoundStart -= RoundManager_OnRoundStart;
 
         private void RoundManager_OnRoundStart(int roundNumber)
         {
@@ -47,10 +52,7 @@ namespace MissileCommand
         }
         private void SpawnEnemyMissile(Vector2 spawnPosition, Vector2 destination)
         {
-            EnemyMissile missile = Pooler<EnemyMissile>.Instance.GetObject();
-            missile.transform.position = spawnPosition;
-            missile.SetDestination(destination);
-            missile.gameObject.SetActive(true);
+            _missileShooter.Shoot(destination, spawnPosition);
         }
         private void SpawnEnemyMissile(Vector2 spawnPosition)
         {

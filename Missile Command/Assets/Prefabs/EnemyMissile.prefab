@@ -92,8 +92,10 @@ GameObject:
   m_Component:
   - component: {fileID: 6842268136946512014}
   - component: {fileID: 347425095761345716}
+  - component: {fileID: -7207738251935914254}
   - component: {fileID: -957345796032419853}
   - component: {fileID: 7930385854433467605}
+  - component: {fileID: 1495683508154591482}
   m_Layer: 0
   m_Name: EnemyMissile
   m_TagString: Untagged
@@ -128,8 +130,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 805c11c78f53f824d931c62a4bd428ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _missileDestruction: {fileID: 5708503968671426264, guid: 088f639cd486b964cb812eb3d1cc19f1, type: 3}
   _missileValue: 10
+--- !u!114 &-7207738251935914254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6842268136946512008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39bd48179a1200e4781ca843c3e2f2f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _movementSpeed: 3
 --- !u!58 &-957345796032419853
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -167,3 +181,16 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &1495683508154591482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6842268136946512008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be6ec44845ef83747b77d9fe4a23ec36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  missileDestruction: {fileID: 5708503968671426264, guid: 088f639cd486b964cb812eb3d1cc19f1, type: 3}

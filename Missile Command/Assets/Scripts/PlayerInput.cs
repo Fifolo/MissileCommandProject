@@ -23,10 +23,15 @@ namespace MissileCommand
             if (mainCamera == null) Debug.LogError($"Main camera not attached to {GetType()}");
         }
 
-        private void Start()
+        private void SubscribeToRoundEvents()
         {
             RoundManager.OnRoundFinish += OnRoundFinish;
             RoundManager.OnRoundStart += OnRoundStart;
+        }
+        private void UnsubscribeToRoundEvents()
+        {
+            RoundManager.OnRoundFinish -= OnRoundFinish;
+            RoundManager.OnRoundStart -= OnRoundStart;
         }
 
         private void OnRoundStart(int roundNumber) => inputActions.InGame.Enable();
@@ -37,12 +42,14 @@ namespace MissileCommand
         {
             inputActions.InGame.Enable();
             SubscribeToInputActions();
+            SubscribeToRoundEvents();
         }
 
         private void OnDisable()
         {
             inputActions.InGame.Disable();
             UnsubscribeToInputActions();
+            UnsubscribeToRoundEvents();
         }
         #endregion
 

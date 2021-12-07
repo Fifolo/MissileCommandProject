@@ -6,18 +6,20 @@ namespace MissileCommand
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(PlayerInput))]
+    [RequireComponent(typeof(PlayerMissileShooter))]
     public class PlayerController : MonoBehaviour
     {
-        [SerializeField] private PlayerMissile missileToShoot;
-        [SerializeField] private Transform firePoint;
-
-        private int _availableMissiles = 0;
+        private int _availableMissiles = 100;
         public int AvailableMissiles { get { return _availableMissiles; } }
         private PlayerInput playerInput;
+        private PlayerMissileShooter _missileShooter;
+        private Transform _playerTransform;
 
         private void Awake()
         {
+            _playerTransform = transform;
             playerInput = GetComponent<PlayerInput>();
+            _missileShooter = GetComponent<PlayerMissileShooter>();
             playerInput.OnFirePressed += OnFirePressed;
             RoundManager.OnRoundStart += RoundManager_OnRoundStart;
         }
@@ -31,18 +33,7 @@ namespace MissileCommand
         {
             if (_availableMissiles > 0)
             {
-                PlayerMissile missile;
-
-                if (Pooler<PlayerMissile>.Instance)
-                    missile = Pooler<PlayerMissile>.Instance.GetObject();
-
-                else missile = Instantiate(missileToShoot, firePoint.position, Quaternion.identity);
-
-                missile.transform.position = firePoint.position;
-
-                missile.SetDestination(inputPosition);
-                missile.gameObject.SetActive(true);
-
+                _missileShooter.Shoot(inputPosition, _playerTransform.position);
                 _availableMissiles--;
             }
         }

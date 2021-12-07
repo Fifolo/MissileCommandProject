@@ -2,62 +2,45 @@ using UnityEngine;
 
 namespace MissileCommand
 {
+    [DisallowMultipleComponent]
+    [RequireComponent(typeof(ObjectMover))]
     public abstract class Missile : MonoBehaviour
     {
-        [SerializeField] protected MissileDestruction _missileDestruction;
-        protected Vector2 _destination;
-        protected Vector2 _movementDirection;
-        protected float _movementSpeed = 3f;
         protected Transform _missileTransform;
-        protected virtual void Awake() => _missileTransform = transform;
+        protected ObjectMover _objectMover;
+        protected DestructionSpawner _destructionSpawner;
+        protected virtual void Awake()
+        {
+            _objectMover = GetComponent<ObjectMover>();
+            _destructionSpawner = GetComponent<DestructionSpawner>();
+            _missileTransform = transform;
+        }
 
         private void Update()
         {
-            Move();
+            _objectMover.Move();
 
-            if (ReachedDestination())
+            if (_objectMover.ReachedDestination())
             {
                 DestinationReached();
             }
         }
 
-        protected virtual bool ReachedDestination()
-        {
-            return Vector3.Distance(_missileTransform.position, _destination) <= (MissilesManager.Instance == null ? MissilesManager.Instance.StoppingDistance : 0.1f);
-        }
-
-        protected virtual void Move()
-        {
-            _missileTransform.Translate(_movementDirection * _movementSpeed * Time.deltaTime);
-        }
-
         protected void DestinationReached()
         {
-            if (_missileDestruction)
+            if (_destructionSpawner)
             {
-
-                if (Pooler<MissileDestruction>.Instance)
-                {
-                    MissileDestruction missileDestruction = Pooler<MissileDestruction>.Instance.GetObject();
-                    missileDestruction.transform.position = _missileTransform.position;
-                    missileDestruction.gameObject.SetActive(true);
-                }
-                else
-                    Instantiate(_missileDestruction, _missileTransform.position, Quaternion.identity);
+                _destructionSpawner.SpawnDestruction();
             }
+
             Destroy();
         }
 
-        protected virtual void Destroy()
-        {
-            Destroy(gameObject);
-        }
+        protected virtual void Destroy() => Destroy(gameObject);
 
         public virtual void SetDestination(Vector2 destination)
         {
-            _destination = destination;
-            Vector2 currentPosition = _missileTransform.position;
-            _movementDirection = (_destination - currentPosition).normalized;
+            _objectMover.SetDestination(destination);
         }
     }
 }

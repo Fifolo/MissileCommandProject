@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace MissileCommand
 {
+    [RequireComponent(typeof(Collider2D))]
     public class PlayerCity : MonoBehaviour, ITarget
     {
         public delegate void CityEvent(PlayerCity city);

@@ -16,9 +16,23 @@ namespace MissileCommand
         protected override void Awake()
         {
             base.Awake();
+        }
+
+        private void OnEnable() => SubscribeToEvents();
+        private void OnDisable() => UnSubscribeToEvents();
+
+        private void SubscribeToEvents()
+        {
             RoundManager.OnRoundFinish += OnRoundFinish;
             RoundManager.OnRoundStart += OnRoundStart; ;
-            EnemyMissile.OnEnemyMissileDestroyed += OnEnemyMissileDestroyed;
+            Destruction.OnEnemyDestroyed += OnEnemyDestroyed;
+        }
+
+        private void UnSubscribeToEvents()
+        {
+            RoundManager.OnRoundFinish -= OnRoundFinish;
+            RoundManager.OnRoundStart -= OnRoundStart; ;
+            Destruction.OnEnemyDestroyed -= OnEnemyDestroyed;
         }
 
         private void OnRoundStart(int roundNumber)
@@ -29,7 +43,7 @@ namespace MissileCommand
             ScoreThisRound = 0;
         }
 
-        private void OnEnemyMissileDestroyed(int missileValue)
+        private void OnEnemyDestroyed(int missileValue)
         {
             ScoreThisRound += missileValue;
             TotalScore += missileValue;
