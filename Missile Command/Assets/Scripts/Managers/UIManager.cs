@@ -16,8 +16,6 @@ namespace MissileCommand
         protected override void Awake()
         {
             base.Awake();
-            RoundManager.OnRoundFinish += OnRoundFinish;
-            GameManager.OnGameStateChange += GameManager_OnGameStateChange;
 
             _pauseMenuCanvas.gameObject.SetActive(false);
             _gameOverCanvas.gameObject.SetActive(false);
@@ -35,21 +33,26 @@ namespace MissileCommand
                 SwitchCanvas(_gameOverCanvas);
         }
 
-        private void OnRoundFinish(int roundNumber)
-        {
-            SwitchCanvas(_roundBreakCanvas);
-        }
+        protected void OnEnable() => SubscribeToEvents();
+        protected void OnDisable() => UnsubscribeToEvents();
 
-        protected void OnEnable()
+        private void SubscribeToEvents()
         {
+            GameManager.OnGameStateChange += GameManager_OnGameStateChange;
             RoundManager.OnRoundStart += OnRoundStart;
             RoundManager.OnRoundFinish += OnRoundFinish;
         }
-        protected void OnDisable()
+
+
+        private void UnsubscribeToEvents()
         {
+            GameManager.OnGameStateChange -= GameManager_OnGameStateChange;
             RoundManager.OnRoundStart -= OnRoundStart;
             RoundManager.OnRoundFinish -= OnRoundFinish;
         }
+
+        private void OnRoundFinish(int roundNumber) => SwitchCanvas(_roundBreakCanvas);
+
         private void OnRoundStart(int roundNumber)
         {
             _roundBreakCanvas.gameObject.SetActive(false);

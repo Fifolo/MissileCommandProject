@@ -15,9 +15,20 @@ namespace MissileCommand
         [SerializeField] private float _stoppingDistance = 0.01f;
         [Range(0, 1f)]
         [SerializeField] private float _chanceToDuplicate = 0f;
+
         [Range(1f, 0f)]
-        [SerializeField] private float _duplicationAllowance = 0.5f;
+        [Tooltip("1 - enemy missiles can't duplicate at all\n" +
+                 "0 - enemy missiles can duplicate everywhere")]
+        [SerializeField] private float _duplicationHeight = 0.5f;
         private float _maxDuplicationHeight = 0;
+
+        [Min(5)]
+        [Tooltip("Number of missiles per round for player")]
+        [SerializeField] private int _playerMissilesPerRound = 10;
+
+        [Min(1)]
+        [Tooltip("Number of missiles per round for enemy spawner")]
+        [SerializeField] private int _enemyMissilesPerRound = 5;
 
         #endregion
 
@@ -59,6 +70,25 @@ namespace MissileCommand
                     _chanceToDuplicate = value;
             }
         }
+        public int PlayerMissilesPerRound
+        {
+            get { return _playerMissilesPerRound; }
+            set
+            {
+                if (value > 0)
+                    _playerMissilesPerRound = value;
+            }
+        }
+        public int EnemyMissilesPerRound
+        {
+            get
+            { return _enemyMissilesPerRound; }
+            set
+            {
+                if (value > 0)
+                    _enemyMissilesPerRound = value;
+            }
+        }
 
         #endregion
 
@@ -73,8 +103,7 @@ namespace MissileCommand
             float maxHeight = Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height)).y;
             float lowestHeight = Camera.main.ScreenToWorldPoint(Vector2.zero).y;
 
-            float maxWidth = Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.width)).x;
-            _maxDuplicationHeight = Mathf.Lerp(lowestHeight, maxHeight, _duplicationAllowance);
+            _maxDuplicationHeight = Mathf.Lerp(lowestHeight, maxHeight, _duplicationHeight);
         }
 
         public bool CanDuplicate(Vector2 currentPosition) => IsAboveSpawnLine(currentPosition.y) && PlayerCity.AllPlayerCities.Count > 1;

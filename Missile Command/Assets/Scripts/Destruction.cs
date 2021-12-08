@@ -22,11 +22,8 @@ namespace MissileCommand
             StartScale = _destructionTransform.localScale;
             GetComponent<Collider2D>().isTrigger = true;
         }
-        private void OnEnable()
-        {
-            StartCoroutine(StartDestruction());
-        }
-        private IEnumerator StartDestruction()
+        private void OnEnable() => StartCoroutine(BeginDestruction());
+        private IEnumerator BeginDestruction()
         {
             float time = 0;
             Vector3 startScale = _destructionTransform.localScale;

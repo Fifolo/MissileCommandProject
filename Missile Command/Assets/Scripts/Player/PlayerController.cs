@@ -20,13 +20,28 @@ namespace MissileCommand
             _playerTransform = transform;
             playerInput = GetComponent<PlayerInput>();
             _missileShooter = GetComponent<PlayerMissileShooter>();
+        }
+
+        private void OnEnable() => SubscribeToEvents();
+
+        private void OnDisable() => UnSubscribeToEvents();
+        private void SubscribeToEvents()
+        {
             playerInput.OnFirePressed += OnFirePressed;
             RoundManager.OnRoundStart += RoundManager_OnRoundStart;
+        }
+        private void UnSubscribeToEvents()
+        {
+            playerInput.OnFirePressed -= OnFirePressed;
+            RoundManager.OnRoundStart -= RoundManager_OnRoundStart;
         }
 
         private void RoundManager_OnRoundStart(int roundNumber)
         {
-            _availableMissiles = RoundManager.Instance.PlayerMissilesPerRound;
+            if (MissilesManager.Instance)
+                _availableMissiles = MissilesManager.Instance.PlayerMissilesPerRound;
+
+            else _availableMissiles = 10;
         }
 
         private void OnFirePressed(Vector2 inputPosition)

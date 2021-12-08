@@ -6,7 +6,16 @@ namespace MissileCommand
 {
     public class EnemyMissile : Missile, ITarget, IPointIncreaserOnDeath
     {
+        public delegate void EnemyMissileEvent();
+        public static event EnemyMissileEvent OnLastMissileDestroyed;
         [SerializeField] private int _missileValue = 10;
+        private static List<EnemyMissile> _activeMissiles;
+        public static bool ExistsActive { get { return _activeMissiles.HasItems(); } }
+        protected override void Awake()
+        {
+            base.Awake();
+            if (_activeMissiles == null) _activeMissiles = new List<EnemyMissile>();
+        }
         public void Hit()
         {
             DestinationReached();
@@ -23,16 +32,26 @@ namespace MissileCommand
             Vector2 secondDestination = secondCity.transform.position;
 
             SetDestination(firstDestination);
-            EnemyMissileSpawner.Instance.SpawnMissile(_missileTransform.position, secondDestination);
+            FindObjectOfType<EnemyMissileSpawner>().SpawnMissile(_missileTransform.position, secondDestination);
         }
         private void OnEnable()
         {
+            _activeMissiles.Add(this);
             if (MissilesManager.Instance)
             {
                 _objectMover.SetMovementSpeed(MissilesManager.Instance.EnemyMissileSpeed);
 
                 if (MissilesManager.Instance.ChanceToDuplicate > 0)
                     StartCoroutine(TryToDuplicate());
+            }
+        }
+        private void OnDisable()
+        {
+            _activeMissiles.Remove(this);
+
+            if (!_activeMissiles.HasItems())
+            {
+                OnLastMissileDestroyed?.Invoke();
             }
         }
         private IEnumerator TryToDuplicate()

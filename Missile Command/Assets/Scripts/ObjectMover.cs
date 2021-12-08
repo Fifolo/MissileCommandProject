@@ -43,7 +43,7 @@ namespace MissileCommand
         {
             _destination = destination;
             Vector2 currentPosition = _moverTransform.position;
-            _movementDirection = (_destination - currentPosition).normalized;
+            _movementDirection = currentPosition.DirectionTo(_destination);
         }
     }
 }
