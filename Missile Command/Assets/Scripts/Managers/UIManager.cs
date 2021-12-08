@@ -1,17 +1,22 @@
 using UnityEngine;
-using TMPro;
 using MissileCommand.Utils;
 
-namespace MissileCommand
+namespace MissileCommand.Managers
 {
     public class UIManager : Singleton<UIManager>
     {
+        #region Variables
+
         [SerializeField] private Canvas _inGameCanvas;
         [SerializeField] private Canvas _roundBreakCanvas;
         [SerializeField] private Canvas _pauseMenuCanvas;
         [SerializeField] private Canvas _gameOverCanvas;
 
         private Canvas _currentCanvas;
+
+        #endregion
+
+        #region MonoBehaviour
 
         protected override void Awake()
         {
@@ -20,6 +25,10 @@ namespace MissileCommand
             _pauseMenuCanvas.gameObject.SetActive(false);
             _gameOverCanvas.gameObject.SetActive(false);
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void GameManager_OnGameStateChange(GameManager.GameState from, GameManager.GameState to)
         {
@@ -33,8 +42,8 @@ namespace MissileCommand
                 SwitchCanvas(_gameOverCanvas);
         }
 
-        protected void OnEnable() => SubscribeToEvents();
-        protected void OnDisable() => UnsubscribeToEvents();
+        private void OnEnable() => SubscribeToEvents();
+        private void OnDisable() => UnsubscribeToEvents();
 
         private void SubscribeToEvents()
         {
@@ -55,8 +64,7 @@ namespace MissileCommand
 
         private void OnRoundStart(int roundNumber)
         {
-            _roundBreakCanvas.gameObject.SetActive(false);
-            _inGameCanvas.gameObject.SetActive(true);
+            SwitchCanvas(_inGameCanvas);
         }
         private void SwitchCanvas(Canvas newCanvas)
         {
@@ -68,5 +76,7 @@ namespace MissileCommand
                 _currentCanvas.gameObject.SetActive(true);
             }
         }
+
+        #endregion
     }
 }

@@ -1,18 +1,26 @@
-using System;
+using MissileCommand.Pooling;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace MissileCommand
 {
+    #region Components Requirement
     [RequireComponent(typeof(ObjectMover))]
     [RequireComponent(typeof(EnemyMissileShooter))]
     [RequireComponent(typeof(DestructionSpawner))]
     [RequireComponent(typeof(Collider2D))]
+    #endregion
     public class Enemy : MonoBehaviour, ITarget, IPointIncreaserOnDeath
     {
+        #region Events
+
         public delegate void EnemyEvent();
         public static event EnemyEvent OnLastEnemyDestroyed;
+
+        #endregion
+
+        #region Variables
         [Min(1)]
         [SerializeField] private int _enemyValue = 10;
         [Range(1f, 10f)]
@@ -27,9 +35,12 @@ namespace MissileCommand
         private ObjectMover _objectMover;
         private EnemyMissileShooter _missileShooter;
         private DestructionSpawner _destructionSpawner;
-
         private Coroutine _shootingCoroutine;
         private Transform _enemyTransform;
+
+        #endregion
+
+        #region MonoBehaviour
 
         private void Awake()
         {
@@ -57,15 +68,18 @@ namespace MissileCommand
             }
         }
 
+        #endregion
+
+        #region Private Methods
+
         private IEnumerator Shooting()
         {
             while (PlayerCity.AllPlayerCities.HasItems())
             {
-                yield return new WaitForSeconds(_shootingRate);
-
                 Vector2 destination = PlayerCity.AllPlayerCities.GetRandomItem().transform.position;
-
                 _missileShooter.Shoot(destination, _enemyTransform.position);
+
+                yield return new WaitForSeconds(_shootingRate);
             }
         }
         private void GetReferences()
@@ -85,6 +99,10 @@ namespace MissileCommand
 
             _objectMover.SetDestination(_waypoints[_destinationIndex]);
         }
+
+        #endregion
+
+        #region Public Methods
 
         public void InitializeWaypoints(List<Vector2> waypoints)
         {
@@ -116,5 +134,7 @@ namespace MissileCommand
 
             else Destroy(gameObject);
         }
+
+        #endregion
     }
 }

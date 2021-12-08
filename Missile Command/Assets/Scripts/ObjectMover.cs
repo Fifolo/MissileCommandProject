@@ -5,6 +5,8 @@ namespace MissileCommand
     [DisallowMultipleComponent]
     public class ObjectMover : MonoBehaviour
     {
+        #region Variables
+
         [Min(1)]
         [SerializeField] private float _movementSpeed = 3f;
         [Min(0.1f)]
@@ -13,7 +15,13 @@ namespace MissileCommand
         private Vector2 _movementDirection;
         private Transform _moverTransform;
 
+        #endregion
+
+        #region MonoBehaviour
         protected void Awake() => _moverTransform = transform;
+        #endregion
+
+        #region Public Methods
 
         public void Move() => _moverTransform.Translate(_movementDirection * _movementSpeed * Time.deltaTime);
 
@@ -45,5 +53,7 @@ namespace MissileCommand
             Vector2 currentPosition = _moverTransform.position;
             _movementDirection = currentPosition.DirectionTo(_destination);
         }
+
+        #endregion
     }
 }

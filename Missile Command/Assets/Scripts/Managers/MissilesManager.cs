@@ -1,7 +1,7 @@
 using UnityEngine;
 using MissileCommand.Utils;
 
-namespace MissileCommand
+namespace MissileCommand.Managers
 {
     public class MissilesManager : Singleton<MissilesManager>
     {
@@ -81,8 +81,7 @@ namespace MissileCommand
         }
         public int EnemyMissilesPerRound
         {
-            get
-            { return _enemyMissilesPerRound; }
+            get { return _enemyMissilesPerRound; }
             set
             {
                 if (value > 0)
@@ -92,11 +91,17 @@ namespace MissileCommand
 
         #endregion
 
+        #region MonoBehaviour
+
         protected override void Awake()
         {
             base.Awake();
             SetMaxDuplicationHeight();
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void SetMaxDuplicationHeight()
         {
@@ -105,9 +110,14 @@ namespace MissileCommand
 
             _maxDuplicationHeight = Mathf.Lerp(lowestHeight, maxHeight, _duplicationHeight);
         }
+        private bool IsAboveSpawnLine(float yPosition) => yPosition > _maxDuplicationHeight;
+
+        #endregion
+
+        #region Public Methods
 
         public bool CanDuplicate(Vector2 currentPosition) => IsAboveSpawnLine(currentPosition.y) && PlayerCity.AllPlayerCities.Count > 1;
 
-        private bool IsAboveSpawnLine(float yPosition) => yPosition > _maxDuplicationHeight;
+        #endregion
     }
 }

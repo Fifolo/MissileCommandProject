@@ -1,13 +1,12 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MissileCommand.Utils;
-using System;
 
-namespace MissileCommand
+namespace MissileCommand.Pooling
 {
     public abstract class Pooler<T> : Singleton<Pooler<T>> where T : MonoBehaviour
     {
+        #region Variables
         [SerializeField] protected T prefabToPool;
         [SerializeField] protected int _amount = 10;
 
@@ -15,6 +14,9 @@ namespace MissileCommand
         protected List<T> _usedList;
 
         protected Transform _poolerTransform;
+        #endregion
+
+        #region MonoBehaviour
 
         protected override void Awake()
         {
@@ -22,6 +24,10 @@ namespace MissileCommand
             _poolerTransform = transform;
             Initialize();
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void Initialize()
         {
@@ -35,6 +41,11 @@ namespace MissileCommand
                 _freeList.Add(prefab);
             }
         }
+
+        #endregion
+
+        #region Public Methods
+
         public T GetObject()
         {
             T prefabToReturn;
@@ -63,5 +74,7 @@ namespace MissileCommand
             _freeList.Add(objectToReturn);
             _usedList.Remove(objectToReturn);
         }
+
+        #endregion
     }
 }

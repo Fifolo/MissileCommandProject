@@ -1,5 +1,5 @@
+using MissileCommand.Pooling;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace MissileCommand
@@ -7,8 +7,12 @@ namespace MissileCommand
     [RequireComponent(typeof(Collider2D))]
     public class Destruction : MonoBehaviour
     {
+        #region Events
         public delegate void DestructionEvent(int enemyValue);
         public static event DestructionEvent OnEnemyDestroyed;
+        #endregion
+
+        #region Variables
 
         [Range(0.5f, 2f)]
         [SerializeField] private float _lifeSpan = 0.5f;
@@ -16,6 +20,11 @@ namespace MissileCommand
         [SerializeField] private float _endScale = 1.4f;
         public Vector3 StartScale { get; private set; }
         private Transform _destructionTransform;
+
+        #endregion
+
+        #region MonoBehaviour
+
         private void Awake()
         {
             _destructionTransform = transform;
@@ -23,6 +32,17 @@ namespace MissileCommand
             GetComponent<Collider2D>().isTrigger = true;
         }
         private void OnEnable() => StartCoroutine(BeginDestruction());
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.TryGetComponent(out ITarget target))
+                target.Hit();
+
+            if (other.TryGetComponent(out IPointIncreaserOnDeath pointIncreaser))
+                OnEnemyDestroyed?.Invoke(pointIncreaser.GetValue());
+        }
+
+        #endregion
         private IEnumerator BeginDestruction()
         {
             float time = 0;
@@ -39,14 +59,6 @@ namespace MissileCommand
                 Pooler<Destruction>.Instance.ReturnObject(this);
 
             else Destroy(gameObject);
-        }
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            if (other.TryGetComponent(out ITarget target))
-                target.Hit();
-
-            if (other.TryGetComponent(out IPointIncreaserOnDeath pointIncreaser))
-                OnEnemyDestroyed?.Invoke(pointIncreaser.GetValue());
         }
     }
 }

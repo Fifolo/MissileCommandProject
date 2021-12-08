@@ -1,16 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MissileCommand.Utils;
-using System;
 
-namespace MissileCommand
+namespace MissileCommand.Managers
 {
     public class GameManager : Singleton<GameManager>
     {
+        #region Events
+
         public delegate void GameStateEvent(GameState from, GameState to);
         public static event GameStateEvent OnGameStateChange;
+
+        #endregion
+
+        #region Variables
         public GameState CurrentGameState { get; private set; }
 
         private int currentSceneIndex = 0;
@@ -27,6 +30,9 @@ namespace MissileCommand
             Paused,
             GameOver
         }
+
+        #endregion
+
         #region MonoBehaviour
         protected override void Awake()
         {
@@ -56,6 +62,9 @@ namespace MissileCommand
                     Time.timeScale = 1f;
                     break;
                 case GameState.Paused:
+                    Time.timeScale = 0;
+                    break;
+                case GameState.GameOver:
                     Time.timeScale = 0;
                     break;
             }
@@ -115,7 +124,9 @@ namespace MissileCommand
             if (IsSceneLoadable(sceneIndex))
                 LoadScene(sceneIndex);
         }
+
         public void StartGame() => LoadLevel(2);
+
         public void PauseToggle()
         {
             if (CurrentGameState == GameState.Running)
@@ -124,11 +135,13 @@ namespace MissileCommand
             else if (CurrentGameState == GameState.Paused)
                 ChangeGameState(GameState.Running);
         }
+
         public void GameOver()
         {
             if (CurrentGameState == GameState.Running)
                 ChangeGameState(GameState.GameOver);
         }
+
         #endregion
     }
 }

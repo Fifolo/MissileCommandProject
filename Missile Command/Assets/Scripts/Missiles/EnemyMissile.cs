@@ -1,39 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MissileCommand.Pooling;
+using MissileCommand.Managers;
 
 namespace MissileCommand
 {
     public class EnemyMissile : Missile, ITarget, IPointIncreaserOnDeath
     {
+        #region Events
+
         public delegate void EnemyMissileEvent();
         public static event EnemyMissileEvent OnLastMissileDestroyed;
+
+        #endregion
+
+        #region Variables
+
         [SerializeField] private int _missileValue = 10;
         private static List<EnemyMissile> _activeMissiles;
         public static bool ExistsActive { get { return _activeMissiles.HasItems(); } }
+
+        #endregion
+
+        #region MonoBehaviour
+
         protected override void Awake()
         {
             base.Awake();
             if (_activeMissiles == null) _activeMissiles = new List<EnemyMissile>();
         }
-        public void Hit()
-        {
-            DestinationReached();
-        }
-        private void Duplicate()
-        {
-            List<PlayerCity> playerCities = new List<PlayerCity>(PlayerCity.AllPlayerCities);
 
-            PlayerCity firstCity = playerCities.GetRandomItem();
-            Vector2 firstDestination = firstCity.transform.position;
-            playerCities.Remove(firstCity);
-
-            PlayerCity secondCity = playerCities.GetRandomItem();
-            Vector2 secondDestination = secondCity.transform.position;
-
-            SetDestination(firstDestination);
-            FindObjectOfType<EnemyMissileSpawner>().SpawnMissile(_missileTransform.position, secondDestination);
-        }
         private void OnEnable()
         {
             _activeMissiles.Add(this);
@@ -54,6 +51,26 @@ namespace MissileCommand
                 OnLastMissileDestroyed?.Invoke();
             }
         }
+
+        #endregion
+
+        #region Private Methods
+
+        private void Duplicate()
+        {
+            List<PlayerCity> playerCities = new List<PlayerCity>(PlayerCity.AllPlayerCities);
+
+            PlayerCity firstCity = playerCities.GetRandomItem();
+            Vector2 firstDestination = firstCity.transform.position;
+            playerCities.Remove(firstCity);
+
+            PlayerCity secondCity = playerCities.GetRandomItem();
+            Vector2 secondDestination = secondCity.transform.position;
+
+            SetDestination(firstDestination);
+            FindObjectOfType<EnemyMissileSpawner>().SpawnMissile(_missileTransform.position, secondDestination);
+        }
+
         private IEnumerator TryToDuplicate()
         {
             yield return new WaitForSeconds(0.5f);
@@ -84,6 +101,9 @@ namespace MissileCommand
             return false;
         }
 
+        #endregion
+
+        #region Protected Methods
         protected override void Destroy()
         {
             if (Pooler<EnemyMissile>.Instance)
@@ -91,7 +111,12 @@ namespace MissileCommand
 
             else base.Destroy();
         }
+        #endregion
 
+        #region Public Methods
+        public void Hit() => DestinationReached();
         public int GetValue() => _missileValue;
+
+        #endregion
     }
 }

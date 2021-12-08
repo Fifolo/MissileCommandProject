@@ -5,13 +5,19 @@ using MissileCommand.Utils;
 using System;
 using System.Linq;
 
-namespace MissileCommand
+namespace MissileCommand.Managers
 {
     public class RoundManager : Singleton<RoundManager>
     {
+        #region Events
+
         public delegate void RoundEvent(int roundNumber);
         public static event RoundEvent OnRoundStart;
         public static event RoundEvent OnRoundFinish;
+
+        #endregion
+
+        #region Variables
 
         [Min(1f)]
         [SerializeField] private float _breakTime = 3f;
@@ -20,10 +26,14 @@ namespace MissileCommand
         private List<Condition> _newRoundConditions;
         public int RoundNumber { get; private set; }
 
+        #endregion
+
+        #region MonoBehaviour
+
         protected override void Awake()
         {
             base.Awake();
-            RoundNumber = 1;
+            RoundNumber = 0;
         }
 
         private void Start()
@@ -31,7 +41,12 @@ namespace MissileCommand
             InitializeNewRoundConditions();
             StartNewRound();
         }
+        private void OnEnable() => SubscribeToEvents();
+        private void OnDisable() => UnSubscribeToEvents();
 
+        #endregion
+
+        #region Private Methods
         private void InitializeNewRoundConditions()
         {
             _newRoundConditions = new List<Condition>();
@@ -68,18 +83,22 @@ namespace MissileCommand
             _newRoundConditions.Add(condition);
         }
 
-        private void OnEnable() => SubscribeToEvents();
-        private void OnDisable() => UnSubscribeToEvents();
-
         private void SubscribeToEvents()
         {
             EnemyMissile.OnLastMissileDestroyed += OnNoMoreMissiles;
             Enemy.OnLastEnemyDestroyed += OnNoMoreEnemies;
+            PlayerCity.OnLastCityDestroyed += OnLastCityDestroyed;
         }
 
+        private void OnLastCityDestroyed()
+        {
+            if (GameManager.Instance)
+                GameManager.Instance.GameOver();
+        }
 
         private void UnSubscribeToEvents()
         {
+            PlayerCity.OnLastCityDestroyed -= OnLastCityDestroyed;
             EnemyMissile.OnLastMissileDestroyed -= OnNoMoreMissiles;
             Enemy.OnLastEnemyDestroyed -= OnNoMoreEnemies;
         }
@@ -120,23 +139,26 @@ namespace MissileCommand
         }
         private void StartNewRound()
         {
-            Debug.Log("Starting round " + RoundNumber);
-            OnRoundStart?.Invoke(RoundNumber);
             RoundNumber++;
+            OnRoundStart?.Invoke(RoundNumber);
+            Debug.Log("Starting round " + RoundNumber);
         }
 
         private IEnumerator NewRoundCountDown()
         {
             float t = 0;
             BreakTimeLeft = _breakTime;
-            while (t <= BreakTimeLeft)
+            while (BreakTimeLeft > 0)
             {
-                BreakTimeLeft = Mathf.Lerp(_breakTime, 0, t);
+                BreakTimeLeft = Mathf.Lerp(_breakTime, 0, t / _breakTime);
                 t += Time.deltaTime;
                 yield return null;
             }
             StartNewRound();
         }
+
+        #endregion
+
         private class Condition
         {
             public Condition(Func<bool> condition)

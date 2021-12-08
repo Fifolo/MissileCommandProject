@@ -1,11 +1,15 @@
+using MissileCommand.Pooling;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MissileCommand.Managers;
 
 namespace MissileCommand
 {
     public abstract class Spawner<T> : MonoBehaviour where T : MonoBehaviour
     {
+        #region Variables
+
         [Min(0.5f)]
         [SerializeField] protected float _spawnRate = 5f;
         [SerializeField] protected T _objectToSpawn;
@@ -17,6 +21,21 @@ namespace MissileCommand
         protected virtual void Awake() => GetReferences();
         protected virtual void GetReferences() => _spawnerTransform = transform;
 
+        #endregion
+
+        #region MonoBehaviour
+        protected virtual void OnEnable()
+        {
+            _playerCities = PlayerCity.AllPlayerCities;
+            RoundManager.OnRoundStart += OnRoundStart;
+        }
+
+        protected virtual void OnDisable() => RoundManager.OnRoundStart -= OnRoundStart;
+
+        #endregion
+
+        #region Protected Methods
+        
         protected void StartSpawning()
         {
             if (_spawningCoroutine != null)
@@ -36,15 +55,10 @@ namespace MissileCommand
 
             spawnedObject.gameObject.SetActive(true);
         }
-
-        protected virtual void OnEnable()
-        {
-            _playerCities = PlayerCity.AllPlayerCities;
-            RoundManager.OnRoundStart += OnRoundStart;
-        }
-        protected virtual void OnDisable() => RoundManager.OnRoundStart -= OnRoundStart;
         protected abstract void OnRoundStart(int roundNumber);
         protected abstract bool SpawnCondition();
         protected abstract IEnumerator Spawning();
+
+        #endregion
     }
 }

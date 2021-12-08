@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using MissileCommand.Utils;
+using MissileCommand.Managers;
 
-namespace MissileCommand
+namespace MissileCommand.Menus
 {
     public class PauseMenu : Singleton<PauseMenu>
     {

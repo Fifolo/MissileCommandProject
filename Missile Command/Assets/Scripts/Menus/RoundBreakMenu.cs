@@ -1,25 +1,27 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using MissileCommand.Utils;
-using System;
+using MissileCommand.Managers;
 
-namespace MissileCommand
+namespace MissileCommand.Menus
 {
     public class RoundBreakMenu : Singleton<RoundBreakMenu>
     {
+        #region Variables
+
         [SerializeField] private TextMeshProUGUI _roundText;
         [SerializeField] private TextMeshProUGUI _pointsInRoundText;
         [SerializeField] private TextMeshProUGUI _totalPointsText;
         [SerializeField] private TextMeshProUGUI _nextRoundText;
 
-        private void OnEnable()
-        {
-            UpdateText();
-        }
+        #endregion
 
+        #region MonoBehaviour
+        private void OnEnable() => UpdateText();
+        #endregion
+
+        #region Private Methods
         private void UpdateText()
         {
             _roundText.text = $"Round {RoundManager.Instance.RoundNumber}";
@@ -36,9 +38,10 @@ namespace MissileCommand
         {
             while (gameObject.activeInHierarchy)
             {
-                _nextRoundText.text = $"Next round in: {RoundManager.Instance.BreakTimeLeft}s";
+                _nextRoundText.text = $"Next round in: {RoundManager.Instance.BreakTimeLeft.ToString("0.00")}s";
                 yield return null;
             }
         }
+        #endregion
     }
 }

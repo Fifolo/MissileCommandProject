@@ -1,12 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using MissileCommand.Managers;
 
 namespace MissileCommand
 {
     [RequireComponent(typeof(EnemyMissileShooter))]
     public class EnemyMissileSpawner : Spawner<EnemyMissile>
     {
+        #region Variables
+
         [SerializeField] private float _spawnRange = 10f;
 
         private EnemyMissileShooter _missileShooter;
@@ -14,7 +16,33 @@ namespace MissileCommand
         private int _availableMissiles = 0;
         public int AvailableMissiles { get { return _availableMissiles; } }
 
+        #endregion
+
+        #region MonoBehaviour
+
         private void Start() => _playerCities = PlayerCity.AllPlayerCities;
+
+        #endregion
+
+        #region Private Methods
+        private void SpawnEnemyMissile(Vector2 spawnPosition, Vector2 destination)
+        {
+            _missileShooter.Shoot(destination, spawnPosition);
+            _availableMissiles--;
+        }
+        private void SpawnEnemyMissile(Vector2 spawnPosition)
+        {
+            Vector2 destination = Vector2.zero;
+
+            if (_playerCities.HasItems())
+                destination = _playerCities.GetRandomItem().transform.position;
+
+            SpawnEnemyMissile(spawnPosition, destination);
+        }
+
+        #endregion
+
+        #region Protected Methods
         protected override void GetReferences()
         {
             base.GetReferences();
@@ -38,20 +66,6 @@ namespace MissileCommand
                 yield return new WaitForSeconds(_spawnRate);
             }
         }
-        private void SpawnEnemyMissile(Vector2 spawnPosition, Vector2 destination)
-        {
-            _missileShooter.Shoot(destination, spawnPosition);
-            _availableMissiles--;
-        }
-        private void SpawnEnemyMissile(Vector2 spawnPosition)
-        {
-            Vector2 destination = Vector2.zero;
-
-            if (_playerCities.HasItems())
-                destination = _playerCities.GetRandomItem().transform.position;
-
-            SpawnEnemyMissile(spawnPosition, destination);
-        }
         protected override void SpawnObject()
         {
             Vector2 spawnPosition = _spawnerTransform.position;
@@ -59,13 +73,16 @@ namespace MissileCommand
 
             SpawnEnemyMissile(spawnPosition);
         }
-        public void SpawnMissile(Vector2 spawnPosition, Vector2 destination)
-        {
+
+        protected override bool SpawnCondition() => _playerCities.HasItems() && _availableMissiles > 0;
+
+        #endregion
+
+        #region Public Methods
+
+        public void SpawnMissile(Vector2 spawnPosition, Vector2 destination) =>
             SpawnEnemyMissile(spawnPosition, destination);
-        }
-        protected override bool SpawnCondition()
-        {
-            return _playerCities.HasItems() && _availableMissiles > 0;
-        }
+
+        #endregion
     }
 }

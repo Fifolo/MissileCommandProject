@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace MissileCommand
+namespace MissileCommand.Pooling
 {
     public class MissileDestructionPooler : Pooler<Destruction>
     {

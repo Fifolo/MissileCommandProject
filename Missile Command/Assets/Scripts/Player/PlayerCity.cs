@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,8 +6,8 @@ namespace MissileCommand
     [RequireComponent(typeof(Collider2D))]
     public class PlayerCity : MonoBehaviour, ITarget
     {
-        public delegate void CityEvent(PlayerCity city);
-        public static event CityEvent OnCityDestroyed;
+        public delegate void CityEvent();
+        public static event CityEvent OnLastCityDestroyed;
         public static List<PlayerCity> AllPlayerCities { get; private set; }
 
         private void Awake()
@@ -18,9 +17,11 @@ namespace MissileCommand
         }
         public void Hit()
         {
-            AllPlayerCities.Remove(this);
-            OnCityDestroyed?.Invoke(this);
             Destroy(gameObject);
+
+            AllPlayerCities.Remove(this);
+            if (!AllPlayerCities.HasItems())
+                OnLastCityDestroyed?.Invoke();
         }
     }
 }

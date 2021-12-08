@@ -1,26 +1,41 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using MissileCommand.Utils;
 
-namespace MissileCommand
+namespace MissileCommand.Managers
 {
     public class ScoreManager : Singleton<ScoreManager>
     {
+        #region Events
+
         public delegate void ScoreEvent(int score);
         public static event ScoreEvent OnTotalScoreChange;
 
+        #endregion
+
+        #region Variables
+
         [SerializeField] private int _pointsPerCity = 20;
+        [SerializeField] private int _pointsPerAmmo = 15;
         public int TotalScore { get; private set; }
         public int ScoreThisRound { get; private set; }
-        protected override void Awake()
-        {
-            base.Awake();
-        }
+        private PlayerController player;
 
+        #endregion
+
+        #region MonoBehaviour
+
+        private void Start()
+        {
+            player = FindObjectOfType<PlayerController>();
+            TotalScore = 0;
+            ScoreThisRound = 0;
+        }
         private void OnEnable() => SubscribeToEvents();
         private void OnDisable() => UnSubscribeToEvents();
 
+        #endregion
+
+        #region Private Methods
         private void SubscribeToEvents()
         {
             RoundManager.OnRoundFinish += OnRoundFinish;
@@ -45,25 +60,24 @@ namespace MissileCommand
 
         private void OnEnemyDestroyed(int missileValue)
         {
-            ScoreThisRound += missileValue;
-            TotalScore += missileValue;
-
-            OnTotalScoreChange?.Invoke(TotalScore);
+            UpdateScore(missileValue);
         }
 
         private void OnRoundFinish(int roundNumber)
         {
             int citiesLeft = PlayerCity.AllPlayerCities.Count;
-            TotalScore += citiesLeft * _pointsPerCity;
-            ScoreThisRound += citiesLeft * _pointsPerCity;
+            int ammoLeft = player.AvailableMissiles;
 
-            OnTotalScoreChange?.Invoke(TotalScore);
+            UpdateScore(citiesLeft * _pointsPerCity + ammoLeft * _pointsPerAmmo);
         }
-
-        private void Start()
+        private void UpdateScore(int value)
         {
-            TotalScore = 0;
-            ScoreThisRound = 0;
+            TotalScore += value;
+            OnTotalScoreChange?.Invoke(TotalScore);
+
+            ScoreThisRound += value;
         }
+
+        #endregion
     }
 }

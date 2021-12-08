@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using MissileCommand.Utils;
 using UnityEngine.UI;
+using MissileCommand.Managers;
 
-
-namespace MissileCommand
+namespace MissileCommand.Menus
 {
     public class MainMenu : Singleton<MainMenu>
     {

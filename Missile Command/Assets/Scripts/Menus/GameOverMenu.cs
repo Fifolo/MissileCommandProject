@@ -1,17 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using MissileCommand.Utils;
+using MissileCommand.Managers;
 
-namespace MissileCommand
+namespace MissileCommand.Menus
 {
     public class GameOverMenu : Singleton<GameOverMenu>
     {
+        #region Variables
         [SerializeField] private TextMeshProUGUI _scoreText;
         [SerializeField] private TextMeshProUGUI _roundText;
         [SerializeField] private Button _menuButton;
+        #endregion
+
+        #region MonoBehaviour
 
         private void Start()
         {
@@ -23,5 +26,7 @@ namespace MissileCommand
             _scoreText.text = $"Score: {ScoreManager.Instance.TotalScore}";
             _roundText.text = $"Rounds completed: {RoundManager.Instance.RoundNumber}";
         }
+
+        #endregion
     }
 }

@@ -6,9 +6,16 @@ namespace MissileCommand
     [RequireComponent(typeof(ObjectMover))]
     public abstract class Missile : MonoBehaviour
     {
+        #region Varables
+
         protected Transform _missileTransform;
         protected ObjectMover _objectMover;
         protected DestructionSpawner _destructionSpawner;
+
+        #endregion
+
+        #region MonoBehaviour
+
         protected virtual void Awake()
         {
             _objectMover = GetComponent<ObjectMover>();
@@ -26,6 +33,10 @@ namespace MissileCommand
             }
         }
 
+        #endregion
+
+        #region Protected Methods
+
         protected void DestinationReached()
         {
             if (_destructionSpawner)
@@ -35,12 +46,14 @@ namespace MissileCommand
 
             Destroy();
         }
-
         protected virtual void Destroy() => Destroy(gameObject);
 
-        public virtual void SetDestination(Vector2 destination)
-        {
-            _objectMover.SetDestination(destination);
-        }
+        #endregion
+
+        #region Public Methods
+
+        public virtual void SetDestination(Vector2 destination) => _objectMover.SetDestination(destination);
+
+        #endregion
     }
 }

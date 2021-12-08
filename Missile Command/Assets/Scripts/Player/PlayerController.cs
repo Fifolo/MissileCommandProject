@@ -1,19 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using MissileCommand.Managers;
 
 namespace MissileCommand
 {
-    [DisallowMultipleComponent]
+    #region Components Requirement
     [RequireComponent(typeof(PlayerInput))]
     [RequireComponent(typeof(PlayerMissileShooter))]
+    [DisallowMultipleComponent]
+    #endregion
     public class PlayerController : MonoBehaviour
     {
+        #region Events
+        public delegate void PlayerAmmoEvent(int ammoLeft);
+        public static event PlayerAmmoEvent OnPlayerFire;
+        #endregion
+
+        #region Variables
+
         private int _availableMissiles = 100;
         public int AvailableMissiles { get { return _availableMissiles; } }
         private PlayerInput playerInput;
         private PlayerMissileShooter _missileShooter;
         private Transform _playerTransform;
+
+        #endregion
+
+        #region MonoBehaviour
 
         private void Awake()
         {
@@ -25,6 +37,10 @@ namespace MissileCommand
         private void OnEnable() => SubscribeToEvents();
 
         private void OnDisable() => UnSubscribeToEvents();
+
+        #endregion
+
+        #region Private Methods
         private void SubscribeToEvents()
         {
             playerInput.OnFirePressed += OnFirePressed;
@@ -50,7 +66,10 @@ namespace MissileCommand
             {
                 _missileShooter.Shoot(inputPosition, _playerTransform.position);
                 _availableMissiles--;
+                OnPlayerFire?.Invoke(AvailableMissiles);
             }
         }
+
+        #endregion
     }
 }
