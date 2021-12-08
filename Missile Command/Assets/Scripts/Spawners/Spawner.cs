@@ -10,9 +10,11 @@ namespace MissileCommand
     {
         #region Variables
 
-        [Min(0.5f)]
-        [SerializeField] protected float _spawnRate = 5f;
         [SerializeField] protected T _objectToSpawn;
+        [Min(0.2f)]
+        [SerializeField] protected float _minSpawnRate = 5f;
+        [Min(0.5f)]
+        [SerializeField] protected float _maxSpawnRate = 5f;
 
         protected List<PlayerCity> _playerCities;
         protected Transform _spawnerTransform;
@@ -24,6 +26,14 @@ namespace MissileCommand
         #endregion
 
         #region MonoBehaviour
+        private void OnValidate()
+        {
+            if (_minSpawnRate > _maxSpawnRate)
+                _minSpawnRate = _maxSpawnRate - 0.1f;
+
+            if (_maxSpawnRate < _minSpawnRate)
+                _maxSpawnRate = _minSpawnRate + 0.1f;
+        }
         protected virtual void OnEnable()
         {
             _playerCities = PlayerCity.AllPlayerCities;
@@ -35,7 +45,12 @@ namespace MissileCommand
         #endregion
 
         #region Protected Methods
-        
+
+        protected float GetSpawnRate()
+        {
+            float randomPercent = Random.Range(0, 1f);
+            return Mathf.Lerp(_minSpawnRate, _maxSpawnRate, randomPercent);
+        }
         protected void StartSpawning()
         {
             if (_spawningCoroutine != null)

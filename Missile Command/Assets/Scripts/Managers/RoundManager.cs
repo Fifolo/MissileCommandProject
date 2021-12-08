@@ -22,6 +22,16 @@ namespace MissileCommand.Managers
         [Min(1f)]
         [SerializeField] private float _breakTime = 3f;
 
+        [Header("New Round Increments")]
+        [Range(0f, 1f)]
+        [SerializeField] private float _enemyMissileSpeed = 0.1f;
+        [Range(0f, 1f)]
+        [SerializeField] private float _playerMissileSpeed = 0.1f;
+        [Range(0, 10)]
+        [SerializeField] private int _enemyMissilesAmount = 1;
+        [Range(0, 10)]
+        [SerializeField] private int _playerMissilesAmount = 1;
+
         public float BreakTimeLeft { get; private set; }
         private List<Condition> _newRoundConditions;
         public int RoundNumber { get; private set; }
@@ -141,11 +151,12 @@ namespace MissileCommand.Managers
         {
             RoundNumber++;
             OnRoundStart?.Invoke(RoundNumber);
-            Debug.Log("Starting round " + RoundNumber);
         }
 
         private IEnumerator NewRoundCountDown()
         {
+            UpdateValues();
+
             float t = 0;
             BreakTimeLeft = _breakTime;
             while (BreakTimeLeft > 0)
@@ -155,6 +166,19 @@ namespace MissileCommand.Managers
                 yield return null;
             }
             StartNewRound();
+        }
+
+        private void UpdateValues()
+        {
+            if (MissilesManager.Instance)
+            {
+                MissilesManager manager = MissilesManager.Instance;
+
+                manager.EnemyMissileSpeed += _enemyMissileSpeed;
+                manager.EnemyMissilesPerRound += _enemyMissilesAmount;
+                manager.PlayerMissileSpeed += _playerMissileSpeed;
+                manager.PlayerMissilesPerRound += _playerMissilesAmount;
+            }
         }
 
         #endregion

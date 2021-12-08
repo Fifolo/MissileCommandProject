@@ -63,7 +63,7 @@ namespace MissileCommand
             while (SpawnCondition())
             {
                 SpawnObject();
-                yield return new WaitForSeconds(_spawnRate);
+                yield return new WaitForSeconds(GetSpawnRate());
             }
         }
         protected override void SpawnObject()

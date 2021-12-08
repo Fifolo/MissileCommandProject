@@ -24,7 +24,7 @@ namespace MissileCommand.Menus
         private void OnEnable()
         {
             _scoreText.text = $"Score: {ScoreManager.Instance.TotalScore}";
-            _roundText.text = $"Rounds completed: {RoundManager.Instance.RoundNumber}";
+            _roundText.text = $"Final Round: {RoundManager.Instance.RoundNumber}";
         }
 
         #endregion

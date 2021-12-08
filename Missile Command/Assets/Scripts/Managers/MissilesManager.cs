@@ -7,29 +7,26 @@ namespace MissileCommand.Managers
     {
         #region Variables
 
+        [Header("Base Attributes")]
         [Min(1f)]
         [SerializeField] private float _enemyMissileSpeed = 3f;
         [Min(1f)]
         [SerializeField] private float _playerMissileSpeed = 3f;
-        [Range(0.001f, 1f)]
+        [Range(0.001f, 0.5f)]
         [SerializeField] private float _stoppingDistance = 0.01f;
         [Range(0, 1f)]
         [SerializeField] private float _chanceToDuplicate = 0f;
-
-        [Range(1f, 0f)]
-        [Tooltip("1 - enemy missiles can't duplicate at all\n" +
-                 "0 - enemy missiles can duplicate everywhere")]
-        [SerializeField] private float _duplicationHeight = 0.5f;
-        private float _maxDuplicationHeight = 0;
-
+        [Range(0f, 1f)]
+        [Tooltip("1 - enemy missiles can't duplicate at all\n" + "0 - enemy missiles can duplicate everywhere")]
+        [SerializeField] private float _duplicationBlock = 0.5f;
         [Min(5)]
-        [Tooltip("Number of missiles per round for player")]
-        [SerializeField] private int _playerMissilesPerRound = 10;
-
+        [Tooltip("Base number of missiles per round for player")]
+        [SerializeField] private int _basePlayerMissiles = 10;
         [Min(1)]
-        [Tooltip("Number of missiles per round for enemy spawner")]
-        [SerializeField] private int _enemyMissilesPerRound = 5;
+        [Tooltip("Base number of missiles per round for enemy spawner")]
+        [SerializeField] private int _baseEnemyMissiles = 5;
 
+        private float _maxDuplicationHeight = 0;
         #endregion
 
         #region Getters and Setters
@@ -72,20 +69,20 @@ namespace MissileCommand.Managers
         }
         public int PlayerMissilesPerRound
         {
-            get { return _playerMissilesPerRound; }
+            get { return _basePlayerMissiles; }
             set
             {
                 if (value > 0)
-                    _playerMissilesPerRound = value;
+                    _basePlayerMissiles = value;
             }
         }
         public int EnemyMissilesPerRound
         {
-            get { return _enemyMissilesPerRound; }
+            get { return _baseEnemyMissiles; }
             set
             {
                 if (value > 0)
-                    _enemyMissilesPerRound = value;
+                    _baseEnemyMissiles = value;
             }
         }
 
@@ -97,6 +94,13 @@ namespace MissileCommand.Managers
         {
             base.Awake();
             SetMaxDuplicationHeight();
+            RoundManager.OnRoundFinish += OnRoundFinish;
+        }
+
+        private void OnRoundFinish(int roundNumber)
+        {
+            PlayerMissileSpeed += 0.1f;
+            EnemyMissileSpeed += 0.1f;
         }
 
         #endregion
@@ -108,7 +112,7 @@ namespace MissileCommand.Managers
             float maxHeight = Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height)).y;
             float lowestHeight = Camera.main.ScreenToWorldPoint(Vector2.zero).y;
 
-            _maxDuplicationHeight = Mathf.Lerp(lowestHeight, maxHeight, _duplicationHeight);
+            _maxDuplicationHeight = Mathf.Lerp(lowestHeight, maxHeight, _duplicationBlock);
         }
         private bool IsAboveSpawnLine(float yPosition) => yPosition > _maxDuplicationHeight;
 

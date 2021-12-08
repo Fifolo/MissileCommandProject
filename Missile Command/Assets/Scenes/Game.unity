@@ -571,7 +571,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcac9f2f4e4c2be4fb91e36a6bbc2d55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _breakTime: 5
+  _breakTime: 3
+  _enemyMissileSpeed: 0.1
+  _playerMissileSpeed: 0.3
+  _enemyMissilesAmount: 3
+  _playerMissilesAmount: 2
 --- !u!1 &413918530
 GameObject:
   m_ObjectHideFlags: 0
@@ -1954,9 +1958,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7139008771f87740baf824b8063d46d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnRate: 5
   _objectToSpawn: {fileID: 6801188381456374672, guid: 8b3704e540d63a24bacd08656b663884, type: 3}
+  _minSpawnRate: 1.5
+  _maxSpawnRate: 5
   _spawnFromRound: 3
+  _initialWaitTime: 1
 --- !u!1 &1196964177
 GameObject:
   m_ObjectHideFlags: 0
@@ -2861,13 +2867,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29264a898c3abf64daab9b6c4f7cdc3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyMissileSpeed: 2.5
-  _playerMissileSpeed: 10
+  _enemyMissileSpeed: 2.7
+  _playerMissileSpeed: 9
   _stoppingDistance: 0.001
-  _chanceToDuplicate: 0.144
-  _duplicationHeight: 0.331
-  _playerMissilesPerRound: 15
-  _enemyMissilesPerRound: 5
+  _chanceToDuplicate: 0.2
+  _duplicationBlock: 0.85
+  _basePlayerMissiles: 10
+  _baseEnemyMissiles: 5
 --- !u!1001 &1597124730
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2974,9 +2980,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b65192ccc80f935428158eff7481f9c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnRate: 1
   _objectToSpawn: {fileID: 347425095761345716, guid: 3dc562ec977b3c342846d166f0273f96, type: 3}
-  _spawnRange: 10
+  _minSpawnRate: 0.5
+  _maxSpawnRate: 3
+  _spawnRange: 12
 --- !u!114 &1598070231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3526,7 +3533,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Rounds completed: 1'
+  m_text: 'Final Round : 1'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3974,7 +3981,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

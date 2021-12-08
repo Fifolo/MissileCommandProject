@@ -11,6 +11,8 @@ namespace MissileCommand
 
         [Min(1)]
         [SerializeField] private int _spawnFromRound = 3;
+        [Min(0.5f)]
+        [SerializeField] private float _initialWaitTime = 1f;
 
         private int _availableEnemies = 0;
         public int AvailableEnemies { get { return _availableEnemies; } }
@@ -62,10 +64,12 @@ namespace MissileCommand
 
         protected override IEnumerator Spawning()
         {
+            yield return new WaitForSeconds(_initialWaitTime);
+
             while (SpawnCondition())
             {
                 SpawnObject();
-                yield return new WaitForSeconds(_spawnRate);
+                yield return new WaitForSeconds(GetSpawnRate());
             }
         }
 
