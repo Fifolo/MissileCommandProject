@@ -574,8 +574,8 @@ MonoBehaviour:
   _breakTime: 3
   _enemyMissileSpeed: 0.1
   _playerMissileSpeed: 0.3
-  _enemyMissilesAmount: 3
-  _playerMissilesAmount: 2
+  _enemyMissilesAmount: 2
+  _playerMissilesAmount: 3
 --- !u!1 &413918530
 GameObject:
   m_ObjectHideFlags: 0
@@ -2870,8 +2870,8 @@ MonoBehaviour:
   _enemyMissileSpeed: 2.7
   _playerMissileSpeed: 9
   _stoppingDistance: 0.001
-  _chanceToDuplicate: 0.2
-  _duplicationBlock: 0.85
+  _chanceToDuplicate: 0.181
+  _duplicationBlock: 0.788
   _basePlayerMissiles: 10
   _baseEnemyMissiles: 5
 --- !u!1001 &1597124730
@@ -2983,7 +2983,7 @@ MonoBehaviour:
   _objectToSpawn: {fileID: 347425095761345716, guid: 3dc562ec977b3c342846d166f0273f96, type: 3}
   _minSpawnRate: 0.5
   _maxSpawnRate: 3
-  _spawnRange: 12
+  _spawnRange: 10
 --- !u!114 &1598070231
 MonoBehaviour:
   m_ObjectHideFlags: 0
